@@ -22,7 +22,7 @@
 
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, redirect
 import json
 app = Flask(__name__)
 app.debug = True
@@ -74,8 +74,7 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    # return redirect("http://", code=302)
-    return flask.send_from_directory('static', 'index.html')
+    return redirect("/static/index.html", code=301)
 
 @app.route("/static/index.html")
 def index():
@@ -89,7 +88,9 @@ def update(entity):
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return myWorld.world()
+    
+    world = json.dumps(myWorld.world())
+    return world
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
@@ -99,6 +100,7 @@ def get_entity(entity):
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
+    myWorld.clear()
     return None
 
 if __name__ == "__main__":
