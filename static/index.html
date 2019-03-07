@@ -40,21 +40,19 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
 
     reqPromise.then((httpResponse) => {
         if(httpResponse.status === 200) {
-            httpResponse.json().then((results) => {
-                // pass data to the callback
-                // console.log(results, "oof");
-                console.log(results, "save me");
-                if(callback != null) {
-                    callback(results)
-                }
-            }).catch((error) => {
-                console.error(error);
-            })
+            if(callback != null) {
+                httpResponse.json().then((results) => {
+                callback(results) //updates the world to be the new world
+                renderFrame()
+                }).catch((error) => {
+                    console.error(error);
+                })
+            }
         }
     }).catch((error) => {
         console.error(error);
     });
-    // const reqPromise = fetch(
+
     // var xhr = new XMLHttpRequest();
     // xhr.onreadystatechange = function () {
     //     if (xhr.readyState==4) {
@@ -86,8 +84,9 @@ function drawCircle(context,entity) {
         var y = entity["y"];
         //moveTo(x,y);
         fillStyle = entity["colour"];
-        strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);  
+        strokeStyle = fillStyle; //decreased radius so that it looks filled in
+        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);
+        // fillRect(x, y, 5, 5);  
         stroke();                                
     }
 }
@@ -161,7 +160,6 @@ function addEntity(entity, data) {
     drawNextFrame(); // (but should we?)
     // const url, objects;
     //XXX: Send a XHTML Request that updates the entity you just  modified!
-    // console.log(data, "ooooo");
     const url = "http://" + this.host + "/entity/"+entity,
         objects = {
             method: "POST",
@@ -277,6 +275,13 @@ mouse = (function() {
     return self;
 })();
 
+
+function randomColor() {
+    var colors = ['red', 'blue', 'yellow', 'green', 'aqua'],
+        randomColorIndex = Math.floor((Math.random() * (colors.length)));
+
+    return colors[randomColorIndex];
+}
 // Add the application specific mouse listeners!
 //XXX: TODO Make these prettier!
 mouse.mousedowners.push(function(x,y,clicked,e) {
@@ -288,8 +293,8 @@ mouse.mouseuppers.push(function(x,y,clicked,e) {
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'green',
-                          'radius':1});
+    addEntityWithoutName({'x':x,'y':y,'colour': randomColor(),
+                          'radius':1}); //changed radius to ressemble paint brush more
 });
 
 
