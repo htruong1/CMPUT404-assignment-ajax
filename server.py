@@ -117,7 +117,10 @@ def get_entity(entity):
 def clear():
     '''Clear the world out!'''
     myWorld.clear()
+
+    world = json.dumps(myWorld.world())
     response = app.response_class(
+        response = world,
         status = 200
     )
     return response
